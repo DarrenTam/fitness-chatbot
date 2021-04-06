@@ -1,0 +1,11 @@
+//AWS
+region      = "ap-southeast-1"
+environment = "uat"
+name = "test"
+container_port = 80
+container_image ="helloworld"
+container_environment  = "uat"
+
+//Network setting
+vpc_cidr             = "10.0.0.0/16"
+public_subnets_cidr  = ["10.0.1.0/24","10.0.2.0/24"] //List of Public subnet cidr range

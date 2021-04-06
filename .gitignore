@@ -1,0 +1,4 @@
+aws_terraform/.terraform/
+aws_terraform/terraform.tfstate
+aws_terraform/terraform.tfvars
+.env

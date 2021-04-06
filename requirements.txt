@@ -1,0 +1,6 @@
+telegram
+python-telegram-bot>=13.1
+configparser
+redis
+boto3
+python-dotenv
