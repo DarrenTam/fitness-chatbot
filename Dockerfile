@@ -2,6 +2,8 @@ FROM python:3.8
 
 WORKDIR /app
 
+ARG ACCESS_TOKEN
+
 ENV ACCESS_TOKEN ${ACCESS_TOKEN}
 
 COPY requirements.txt requirements.txt
