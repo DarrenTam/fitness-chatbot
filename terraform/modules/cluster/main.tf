@@ -28,7 +28,7 @@ resource "aws_security_group" "ecs_tasks" {
 }
 
 resource "aws_ecr_repository" "main" {
-  name = "${var.name}-${var.environment}"
+  name = var.name
   image_tag_mutability = "MUTABLE"
 }
 
@@ -113,7 +113,7 @@ resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment" {
 
 resource "aws_ecs_task_definition" "chatbot_service" {
   network_mode = "awsvpc"
-  family = "${var.name}-cluster"
+  family = "${var.name}-service"
         cpu = 256
       memory = 512
    execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
