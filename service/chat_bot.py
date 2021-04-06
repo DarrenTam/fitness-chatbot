@@ -13,7 +13,6 @@ import boto3
 
 
 def start_chatbot():
-    print(os.environ)
     updater = Updater(token=ACCESS_TOKEN, use_context=True)
     dispatcher = updater.dispatcher
 

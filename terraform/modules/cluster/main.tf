@@ -32,6 +32,7 @@ resource "aws_ecr_repository" "main" {
   image_tag_mutability = "MUTABLE"
 }
 
+//Should including ecr and cloudwatch policy
 resource "aws_iam_role" "ecs_task_execution_role" {
   name = "${var.name}-ecsTaskExecutionRole"
 
