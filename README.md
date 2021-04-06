@@ -5,6 +5,6 @@
 
 `cd terraform`  
 ### modify the terraform.sample.tfvar to terraform.tfvar and update the varable
+`terraform init`  
 `terraform plan`  
-
 `terraform apply`
