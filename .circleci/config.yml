@@ -10,7 +10,7 @@ workflows:
       - aws-ecr/build-and-push-image:
           repo: "${AWS_RESOURCE_NAME_PREFIX}"
           tag: "${CIRCLE_SHA1}"
-          extra-build-args: "ACCESS_TOKEN=${TG_BOT_ACCESS_TOKEN}"
+          extra-build-args: "--build-arg ACCESS_TOKEN=${TG_BOT_ACCESS_TOKEN}"
       - aws-ecs/deploy-service-update:
           requires:
             - aws-ecr/build-and-push-image
