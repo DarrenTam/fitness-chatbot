@@ -113,7 +113,7 @@ resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment" {
 
 resource "aws_ecs_task_definition" "chatbot_service" {
   network_mode = "awsvpc"
-  family = var.name
+  family = "${var.name}-cluster"
         cpu = 256
       memory = 512
    execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
@@ -128,8 +128,8 @@ resource "aws_ecs_task_definition" "chatbot_service" {
       essential = true
       portMappings = [
         {
-          containerPort = 80
-          hostPort = 80
+          containerPort = var.container_port
+          hostPort = var.container_port
         }
       ]
     }
@@ -137,7 +137,7 @@ resource "aws_ecs_task_definition" "chatbot_service" {
 }
 
 resource "aws_ecs_service" "chatbot" {
-  name = "${var.name}-cluster"
+  name = "${var.name}-service"
   cluster = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.chatbot_service.arn
   desired_count = 2
