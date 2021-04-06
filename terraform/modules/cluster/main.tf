@@ -53,7 +53,7 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "ecs-task-execution-role-policy-attachment" {
-  role       = aws_iam_role.ecs_task_execution_role.name
+  role = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 resource "aws_iam_role" "ecs_task_role" {
@@ -77,10 +77,10 @@ EOF
 }
 
 resource "aws_iam_policy" "dynamodb" {
-  name        = "${var.name}-task-policy-dynamodb"
+  name = "${var.name}-task-policy-dynamodb"
   description = "Policy that allows access to DynamoDB"
 
- policy = <<EOF
+  policy = <<EOF
 {
    "Version": "2012-10-17",
    "Statement": [
@@ -106,26 +106,48 @@ resource "aws_iam_policy" "dynamodb" {
 EOF
 }
 
+resource "aws_iam_policy" "ecr" {
+  name = "${var.name}-task-policy-ecr"
+  description = "Policy that allows access to ecr"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "ecr:*",
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment-db" {
+  role = aws_iam_role.ecs_task_role.name
+  policy_arn = aws_iam_policy.ecr.arn
+}
 
 resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment-ecr" {
-  role       = aws_iam_role.ecs_task_role.name
+  role = aws_iam_role.ecs_task_role.name
   policy_arn = aws_iam_policy.dynamodb.arn
 }
 
 resource "aws_ecs_task_definition" "chatbot_service" {
   network_mode = "awsvpc"
   family = "${var.name}-service"
-        cpu = 256
-      memory = 512
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
-  task_role_arn            = aws_iam_role.ecs_task_role.arn
+  cpu = 256
+  memory = 512
+  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn = aws_iam_role.ecs_task_role.arn
   requires_compatibilities = [
     "FARGATE"]
 
   container_definitions = jsonencode([
     {
       name = var.name
-      image = "${var.container_image}:latest"
+      image = var.container_image
       essential = true
       portMappings = [
         {
@@ -133,16 +155,21 @@ resource "aws_ecs_task_definition" "chatbot_service" {
           hostPort = var.container_port
         }
       ],
-       logConfiguration: {
-      "logDriver": "awslogs",
-      "options": {
-        "awslogs-group": var.name,
-        "awslogs-stream-prefix": "ecs",
-        "awslogs-region": "ap-southeast-1"
+      logConfiguration: {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": aws_cloudwatch_log_group.ecs_log_group.name,
+          "awslogs-stream-prefix": "ecs",
+          "awslogs-region": "ap-southeast-1"
+        }
       }
     }
-    }
   ])
+}
+
+resource "aws_cloudwatch_log_group" "ecs_log_group" {
+  name              = "ecs_log_group"
+  retention_in_days = 30
 }
 
 resource "aws_ecs_service" "chatbot" {
