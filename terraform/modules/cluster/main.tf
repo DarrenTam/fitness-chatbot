@@ -106,28 +106,6 @@ resource "aws_iam_policy" "dynamodb" {
 EOF
 }
 
-resource "aws_iam_policy" "ecr" {
-  name        = "${var.name}-task-policy-ecr"
-  description = "Policy that allows access to ecr"
-
- policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": "ecr:*",
-            "Resource": "*"
-        }
-    ]
-}
-EOF
-}
-
-resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment-db" {
-  role = aws_iam_role.ecs_task_role.name
-  policy_arn = aws_iam_policy.ecr.arn
-}
 
 resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment-ecr" {
   role       = aws_iam_role.ecs_task_role.name
@@ -147,7 +125,7 @@ resource "aws_ecs_task_definition" "chatbot_service" {
   container_definitions = jsonencode([
     {
       name = var.name
-      image = var.name
+      image = "${var.container_image}:latest"
       essential = true
       portMappings = [
         {
