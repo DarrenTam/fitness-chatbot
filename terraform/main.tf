@@ -14,6 +14,7 @@ module "networking" {
   public_subnets_cidr = var.public_subnets_cidr
   availability_zones = local.production_availability_zones
   name = var.name
+  container_port = var.container_port
 }
 
 module "database" {

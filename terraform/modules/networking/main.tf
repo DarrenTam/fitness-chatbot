@@ -75,7 +75,7 @@ resource "aws_security_group" "alb" {
 
 resource "aws_alb_target_group" "main" {
   name        = "${var.name}-tg-${var.environment}"
-  port        = 80
+  port        = var.container_port
   protocol    = "HTTP"
   vpc_id      = aws_vpc.vpc.id
   target_type = "ip"

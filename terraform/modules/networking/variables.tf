@@ -6,6 +6,10 @@ variable "vpc_cidr" {
   description = "The CIDR block of the vpc"
 }
 
+variable "container_port" {
+  description = "The port of container"
+}
+
 variable "public_subnets_cidr" {
   type        = list
   description = "The CIDR block for the public subnet"
