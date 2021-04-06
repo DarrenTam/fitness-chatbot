@@ -107,8 +107,8 @@ EOF
 }
 
 resource "aws_iam_policy" "ecr" {
-  name        = "${var.name}-task-policy-dynamodb"
-  description = "Policy that allows access to DynamoDB"
+  name        = "${var.name}-task-policy-ecr"
+  description = "Policy that allows access to ecr"
 
  policy = <<EOF
 {
