@@ -1,5 +1,5 @@
 resource "aws_ecs_cluster" "main" {
-  name = var.name
+  name = "${var.name}-cluster"
 }
 
 resource "aws_security_group" "ecs_tasks" {
@@ -137,7 +137,7 @@ resource "aws_ecs_task_definition" "chatbot_service" {
 }
 
 resource "aws_ecs_service" "chatbot" {
-  name = "${var.name}-service-${var.environment}"
+  name = "${var.name}-cluster"
   cluster = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.chatbot_service.arn
   desired_count = 2
