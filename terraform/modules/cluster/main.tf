@@ -124,7 +124,7 @@ resource "aws_ecs_task_definition" "chatbot_service" {
   container_definitions = jsonencode([
     {
       name = var.name
-      image = "jenkins"
+      image = var.name
       essential = true
       portMappings = [
         {
