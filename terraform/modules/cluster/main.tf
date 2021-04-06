@@ -154,7 +154,7 @@ resource "aws_ecs_task_definition" "chatbot_service" {
   container_definitions = jsonencode([
     {
       name = var.name
-      image = var.container_image
+      image = aws_ecr_repository.main.repository_url
       essential = true
       portMappings = [
         {
