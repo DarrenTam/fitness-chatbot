@@ -116,7 +116,14 @@ resource "aws_iam_policy" "ecr" {
     "Statement": [
         {
             "Effect": "Allow",
-            "Action": "ecr:*",
+            "Action": [
+                "ecr:GetAuthorizationToken",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
             "Resource": "*"
         }
     ]
@@ -124,12 +131,12 @@ resource "aws_iam_policy" "ecr" {
 EOF
 }
 
-resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment-db" {
-  role = aws_iam_role.ecs_task_role.name
+resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment-ecr" {
+  role = aws_iam_role.ecs_task_execution_role.name
   policy_arn = aws_iam_policy.ecr.arn
 }
 
-resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment-ecr" {
+resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment-db" {
   role = aws_iam_role.ecs_task_role.name
   policy_arn = aws_iam_policy.dynamodb.arn
 }
