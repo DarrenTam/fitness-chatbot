@@ -8,7 +8,7 @@ resource "aws_security_group" "ecs_tasks" {
 
   ingress {
     protocol = "tcp"
-    from_port = 80
+    from_port = var.container_port
     to_port = var.container_port
     cidr_blocks = [
       "0.0.0.0/0"]
@@ -124,7 +124,6 @@ resource "aws_iam_policy" "ecr" {
 EOF
 }
 
-
 resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment-db" {
   role = aws_iam_role.ecs_task_role.name
   policy_arn = aws_iam_policy.ecr.arn
@@ -140,7 +139,7 @@ resource "aws_ecs_task_definition" "chatbot_service" {
   family = "${var.name}-service"
         cpu = 256
       memory = 512
-   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   requires_compatibilities = [
     "FARGATE"]
@@ -155,7 +154,15 @@ resource "aws_ecs_task_definition" "chatbot_service" {
           containerPort = var.container_port
           hostPort = var.container_port
         }
-      ]
+      ],
+       logConfiguration: {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": var.name,
+        "awslogs-stream-prefix": "ecs",
+        "awslogs-region": "ap-southeast-1"
+      }
+    }
     }
   ])
 }
@@ -164,7 +171,7 @@ resource "aws_ecs_service" "chatbot" {
   name = "${var.name}-service"
   cluster = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.chatbot_service.arn
-  desired_count = 2
+  desired_count = 1
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent = 200
   launch_type = "FARGATE"
