@@ -106,7 +106,31 @@ resource "aws_iam_policy" "dynamodb" {
 EOF
 }
 
-resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment" {
+resource "aws_iam_policy" "ecr" {
+  name        = "${var.name}-task-policy-dynamodb"
+  description = "Policy that allows access to DynamoDB"
+
+ policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "ecr:*",
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+
+resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment-db" {
+  role = aws_iam_role.ecs_task_role.name
+  policy_arn = aws_iam_policy.ecr.arn
+}
+
+resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment-ecr" {
   role       = aws_iam_role.ecs_task_role.name
   policy_arn = aws_iam_policy.dynamodb.arn
 }
