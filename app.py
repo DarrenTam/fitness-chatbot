@@ -8,10 +8,10 @@ app = Flask(__name__)
 
 @app.route('/')
 def health_check():
-    # global chat_bot_controller
-    # if not chat_bot_controller:
-    #     chat_bot_controller=True
-    #     start_chatbot()
+    global chat_bot_controller
+    if not chat_bot_controller:
+        chat_bot_controller=True
+        start_chatbot()
     return 'up'
 
 if __name__ == '__main__':

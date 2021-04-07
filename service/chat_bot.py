@@ -1,6 +1,6 @@
 import datetime
 import json
-
+from telegram import ParseMode
 from apscheduler.schedulers.background import BackgroundScheduler
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
@@ -35,10 +35,12 @@ def start_chatbot():
 
 
 def echo(update, context):
-    reply_message = "input :/start {age} {sex} {weight} to start your training."
+    reply_message = "input :/start {age} {sex} {kg} to start your training.  " \
+                    "input :/weight_history to get all history  " \
+                    "input :/update_weight {kg} to get all history  "
     logging.info("Update: " + str(update))
     logging.info("context: " + str(context))
-    context.bot.send_message(chat_id=update.effective_chat.id, text=reply_message)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=reply_message,parse_mode=ParseMode.HTML)
 
 
 def init_user(update: Update, context: CallbackContext) -> None:
@@ -51,6 +53,7 @@ def init_user(update: Update, context: CallbackContext) -> None:
             update.message.reply_text("You can't create account more than once.")
             return
         create_user(user_id, context.args[0], context.args[1], context.args[2], dynamodb=dynamodb)
+        update.message.reply_text('Account create success')
     except (IndexError, ValueError):
         update.message.reply_text('Usage: /start {age} {sex} {weight}')
 
@@ -60,10 +63,16 @@ def get_user_weight_history(update: Update, context: CallbackContext) -> None:
         global dynamodb
         user_id = update.message.chat.username
         user_info = get_user_fitness_info(user_id, dynamodb=dynamodb)
-        logging.info(user_info["generalInfo"])
+        logging.info(user_info)
         if user_info:
+            html_table = "|     Date    | Weight | " \
+                         "|-------------|--------|  "
+
+            for history in user_info["weightHistory"]:
+                html_table += f"|-{history['date']}--|-{history['weight']}kg--|  "
             context.bot.send_message(
-                chat_id=update.effective_chat.id, text=f'{user_info}'
+                chat_id=update.effective_chat.id, text=f'<pre>{html_table}</pre>',
+                parse_mode=ParseMode.HTML
             )
         if not user_info:
             context.bot.send_message(
@@ -81,17 +90,21 @@ def update_user_weight(update: Update, context: CallbackContext) -> None:
         user_id = update.message.chat.username
         user_info = get_user_fitness_info(user_id, dynamodb=dynamodb)
         weight = context.args[0]
-        print(user_info)
-        user_info["weightHistory"].append({
-            "M": {
-                "weight": {
-                    "S": weight
-                },
-                "date": {
-                    "S": f"{datetime.datetime.now().strftime('%c')}"
-                },
+
+        if not user_info:
+            context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text="Please active your account first by using command /start {age} {sex} {weight}."
+            )
+
+        user_info["weightHistory"].append(
+            {
+                "weight": weight,
+
+                "date": f"{datetime.datetime.now().strftime('%Y-%m-%d')}"
+
             }
-        })
+        )
 
         weight_history = user_info["weightHistory"]
         update_weight(user_id, weight, weight_history, dynamodb=dynamodb)
