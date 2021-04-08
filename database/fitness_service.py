@@ -21,21 +21,22 @@ def create_user(user_id, age, sex, weight, dynamodb):
                     }
                 }
             },
-            "weightHistory": [ {
+            "weightHistory": [{
                 "weight": weight,
 
                 "date": f"{datetime.datetime.now().strftime('%Y-%m-%d')}"
 
             }],
             "schedule": {
-                "Monday":[
+                "Monday": [
                     "squats", "lunges", "one - legged squats", "box jumps"
                 ],
-                "Tuesday":["deadlifts", "hip raises", "straight leg deadlifts", "good mornings", "step-ups"],
-                "Wednesday":["overhead press", "bench press", "incline dumbbell press", "push-ups", "dips"],
-                "Thursday":["chin-ups", "pull-ups", "bodyweight rows", "bent-over rows"],
-                "Friday":["planks", "side planks", "exercise ball crunches", "mountain climbers", "jumping knee tucks", "hanging leg raises"],
-                "Saturday":["Rest"],
+                "Tuesday": ["deadlifts", "hip raises", "straight leg deadlifts", "good mornings", "step-ups"],
+                "Wednesday": ["overhead press", "bench press", "incline dumbbell press", "push-ups", "dips"],
+                "Thursday": ["chin-ups", "pull-ups", "bodyweight rows", "bent-over rows"],
+                "Friday": ["planks", "side planks", "exercise ball crunches", "mountain climbers", "jumping knee tucks",
+                           "hanging leg raises"],
+                "Saturday": ["Rest"],
                 "Sunday": ["Rest"]
             }
         }

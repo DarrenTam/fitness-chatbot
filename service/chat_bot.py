@@ -1,6 +1,6 @@
 from datetime import datetime
 import json
-from random import random
+import random
 
 from telegram import ParseMode
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -53,7 +53,7 @@ def calc_calorie(update: Update, context: CallbackContext) -> None:
     user_id = update.message.chat.username
     user_info = get_user_fitness_info(user_id, dynamodb=dynamodb)
     if user_info:
-        update.message.reply_text(f"You should take {1000 + random.randrange(100, 500)}kcal a day.")
+        update.message.reply_text(f"You should take {1500 + random.randrange(100, 500)}kcal a day.")
         return
     context.bot.send_message(
         chat_id=update.effective_chat.id,
@@ -142,7 +142,6 @@ def get_workout_schedule(update: Update, context: CallbackContext) -> None:
 
         user_id = update.message.chat.username
         user_info = get_user_fitness_info(user_id, dynamodb=dynamodb)
-        logging.info(user_info)
         if user_info:
             html_table = "Today Schedule:  "
 
