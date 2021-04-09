@@ -24,7 +24,7 @@ def create_user(user_id, age, sex, weight, dynamodb):
             "weightHistory": [{
                 "weight": weight,
 
-                "date": f"{datetime.datetime.now().strftime('%Y-%m-%d')}"
+                "date": f"{datetime.now().strftime('%Y-%m-%d')}"
 
             }],
             "schedule": {

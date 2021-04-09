@@ -81,7 +81,6 @@ def get_user_weight_history(update: Update, context: CallbackContext) -> None:
         global dynamodb
         user_id = update.message.chat.username
         user_info = get_user_fitness_info(user_id, dynamodb=dynamodb)
-        user_info[""]
         if user_info:
             html_table = "|     Date    | Weight | " \
                          "|-------------|--------|  "
@@ -119,7 +118,7 @@ def update_user_weight(update: Update, context: CallbackContext) -> None:
             {
                 "weight": weight,
 
-                "date": f"{datetime.datetime.now().strftime('%Y-%m-%d')}"
+                "date": f"{datetime.now().strftime('%Y-%m-%d')}"
 
             }
         )
